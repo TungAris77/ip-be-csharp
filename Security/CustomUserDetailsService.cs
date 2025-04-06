@@ -16,26 +16,49 @@ namespace iPortal.Security
         public UserDetails LoadUserByUsername(string username)
         {
             var user = _userRepository.FindByUsername(username)
-                ?? throw new UsernameNotFoundException("Username not exists"); // Sử dụng exception đã định nghĩa
+                ?? throw new UsernameNotFoundException("Username not exists");
 
-            if (user.Status == "RESIGNED")
+            if (user.status == "RESIGNED") // Đổi từ Status
             {
                 throw new AuthenticationException("Tài khoản của bạn đã bị vô hiệu hóa.");
             }
 
-            var authority = new SimpleGrantedAuthority(user.Role.RoleName);
+            var authority = new SimpleGrantedAuthority(user.role.roleName); // Đổi từ Role.RoleName
 
             return new UserDetails(
-                username,
-                user.Password,
+                user.username, // Đổi từ Username
+                user.password, // Đổi từ Password
                 new List<SimpleGrantedAuthority> { authority }
             );
         }
     }
 
-    // Định nghĩa UsernameNotFoundException trong cùng file
     public class UsernameNotFoundException : Exception
     {
         public UsernameNotFoundException(string message) : base(message) { }
+    }
+
+    public class UserDetails
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public List<SimpleGrantedAuthority> Authorities { get; set; }
+
+        public UserDetails(string username, string password, List<SimpleGrantedAuthority> authorities)
+        {
+            Username = username;
+            Password = password;
+            Authorities = authorities;
+        }
+    }
+
+    public class SimpleGrantedAuthority
+    {
+        public string Authority { get; set; }
+
+        public SimpleGrantedAuthority(string authority)
+        {
+            Authority = authority;
+        }
     }
 }

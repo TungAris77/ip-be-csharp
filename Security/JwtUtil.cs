@@ -1,4 +1,4 @@
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -8,7 +8,7 @@ namespace iPortal.Security
     public class JwtUtil
     {
         private readonly string _secretKey;
-        private readonly long _validityInMilliseconds = 3600000; // 1 hour
+        private readonly long _validityInMilliseconds = 3600000; // 1 hour, giống Java
 
         public JwtUtil(IConfiguration configuration)
         {
@@ -16,25 +16,25 @@ namespace iPortal.Security
                 ?? throw new ArgumentNullException(nameof(configuration), "Jwt:SecretKey is not configured.");
         }
 
-        public string GenerateToken(ClaimsPrincipal authentication)
+        // Generate token giống Java: nhận username trực tiếp thay vì ClaimsPrincipal
+        public string GenerateToken(string username)
         {
-            if (authentication == null || authentication.Identity == null || string.IsNullOrEmpty(authentication.Identity.Name))
+            if (string.IsNullOrEmpty(username))
             {
-                throw new ArgumentException("Authentication principal is invalid or lacks a username.");
+                throw new ArgumentException("Username cannot be null or empty.");
             }
 
-            string username = authentication.Identity.Name;
             var now = DateTime.UtcNow;
             var validity = now.AddMilliseconds(_validityInMilliseconds);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, username) }),
+                Subject = new ClaimsIdentity(new[] { new Claim("sub", username) }),
                 IssuedAt = now,
                 Expires = validity,
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey)),
-                    SecurityAlgorithms.HmacSha256Signature)
+                    SecurityAlgorithms.HmacSha512) // Đồng bộ với Java (HS512)
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -42,37 +42,19 @@ namespace iPortal.Security
             return tokenHandler.WriteToken(token);
         }
 
+        // Extract username giống Java: lấy "sub"
         public string ExtractUsername(string token)
         {
-            if (string.IsNullOrEmpty(token))
+            var claims = GetClaimsFromToken(token);
+            var username = claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            if (username == null)
             {
-                throw new ArgumentException("Token cannot be null or empty.");
+                throw new InvalidOperationException("Token does not contain a subject claim.");
             }
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = tokenHandler.ReadJwtToken(token);
-            var nameClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name);
-            if (nameClaim == null)
-            {
-                throw new InvalidOperationException("Token does not contain a username claim.");
-            }
-            return nameClaim.Value;
+            return username;
         }
 
-        public bool IsTokenExpired(string token)
-        {
-            try
-            {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var jwtToken = tokenHandler.ReadJwtToken(token);
-                return jwtToken.ValidTo < DateTime.UtcNow;
-            }
-            catch
-            {
-                return true;
-            }
-        }
-
+        // Validate token giống Java: ném ngoại lệ nếu không hợp lệ
         public bool ValidateToken(string token)
         {
             try
@@ -85,12 +67,42 @@ namespace iPortal.Security
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ClockSkew = TimeSpan.Zero
-                }, out _);
+                }, out SecurityToken validatedToken);
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                throw new SecurityTokenException("Invalid token", ex);
+            }
+        }
+
+        // Kiểm tra token hết hạn giống Java
+        public bool IsTokenExpired(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtToken = tokenHandler.ReadJwtToken(token);
+                return jwtToken.ValidTo < DateTime.UtcNow;
+            }
+            catch (Exception ex)
+            {
+                throw new SecurityTokenException("Error parsing token expiration", ex);
+            }
+        }
+
+        // Hàm phụ để lấy claims, giống Java
+        private List<Claim> GetClaimsFromToken(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtToken = tokenHandler.ReadJwtToken(token);
+                return jwtToken.Claims.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new SecurityTokenException("Error parsing token claims", ex);
             }
         }
     }

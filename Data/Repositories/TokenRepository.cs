@@ -1,4 +1,4 @@
-using iPortal.Data.Entities;
+﻿using iPortal.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace iPortal.Data.Repositories
@@ -14,7 +14,7 @@ namespace iPortal.Data.Repositories
 
         public void DeleteByUsername(string username)
         {
-            var tokens = _context.Tokens.Where(t => t.Username == username);
+            var tokens = _context.Tokens.Where(t => t.username == username); // Đổi từ Username
             _context.Tokens.RemoveRange(tokens);
             _context.SaveChanges();
         }

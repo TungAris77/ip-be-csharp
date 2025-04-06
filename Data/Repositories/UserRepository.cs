@@ -1,4 +1,4 @@
-using iPortal.Data.Entities;
+﻿using iPortal.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace iPortal.Data.Repositories
@@ -15,13 +15,13 @@ namespace iPortal.Data.Repositories
         public User? FindByUsername(string username)
         {
             return _context.Users
-                .Include(u => u.Role)
-                .FirstOrDefault(u => u.Username == username);
+                .Include(u => u.role) // Đổi từ Role
+                .FirstOrDefault(u => u.username == username); // Đổi từ Username
         }
 
-        public List<User> FindByRoleId(int roleId)
+        public List<User> FindByRoleId(long roleId)
         {
-            return _context.Users.Where(u => u.RoleId == roleId).ToList();
+            return _context.Users.Where(u => u.roleId == roleId).ToList(); // Đổi từ RoleId
         }
 
         public User Save(User user)

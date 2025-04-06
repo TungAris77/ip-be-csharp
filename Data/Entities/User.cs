@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace iPortal.Data.Entities
@@ -8,14 +8,20 @@ namespace iPortal.Data.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int id { get; set; }
 
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Status { get; set; }
+        [Column("username")]
+        public string username { get; set; }
+
+        [Column("password")]
+        public string password { get; set; }
+
+        [Column("status")]
+        public string status { get; set; }
 
         [ForeignKey("Role")]
-        public int RoleId { get; set; }
-        public Role Role { get; set; }
+        [Column("role_id")]
+        public long roleId { get; set; }
+        public Role role { get; set; }
     }
 }

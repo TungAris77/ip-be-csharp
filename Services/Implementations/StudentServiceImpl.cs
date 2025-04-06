@@ -16,7 +16,7 @@ namespace iPortal.Services.Implementations
         private readonly ISecurityService _securityService;
 
         public StudentServiceImpl(IMapper mapper, RoleRepository roleRepository,
-    UserRepository userRepository, StudentRepository studentRepository, ISecurityService securityService)
+            UserRepository userRepository, StudentRepository studentRepository, ISecurityService securityService)
         {
             _mapper = mapper;
             _roleRepository = roleRepository;
@@ -33,15 +33,15 @@ namespace iPortal.Services.Implementations
             }
 
             var user = _mapper.Map<User>(request);
-            user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password); // Sửa ở đây
+            user.password = BCrypt.Net.BCrypt.HashPassword(request.Password); // Đổi từ Password
             var role = _roleRepository.FindByRoleName("STUDENT")
                 ?? throw new ArgumentException("Role undefined");
-            user.Role = role;
-            user.Status = "INACTIVE";
+            user.role = role; // Đổi từ Role
+            user.status = "INACTIVE"; // Đổi từ Status
             var savedUser = _userRepository.Save(user);
 
             var student = _mapper.Map<Student>(request);
-            student.User = savedUser;
+            student.user = savedUser; // Đổi từ User
             _studentRepository.Save(student);
         }
     }

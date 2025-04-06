@@ -8,18 +8,24 @@ namespace iPortal.Data.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
-        public string Username { get; set; }
-        public string TokenValue { get; set; }
-        public DateTime Expiration { get; set; }
+        public long id { get; set; }
+
+        [Column("username")]
+        public string username { get; set; }
+
+        [Column("token")]
+        public string token { get; set; }
+
+        [Column("expiration")]
+        public DateTime expiration { get; set; }
 
         public Token() { }
 
         public Token(string username, string token, DateTime expiration)
         {
-            Username = username;
-            TokenValue = token;
-            Expiration = expiration;
+            this.username = username;
+            this.token = token;
+            this.expiration = expiration;
         }
     }
 }

@@ -1,4 +1,4 @@
-using iPortal.Data.Entities;
+﻿using iPortal.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace iPortal.Data.Repositories
@@ -14,7 +14,7 @@ namespace iPortal.Data.Repositories
 
         public Role? FindByRoleName(string roleName)
         {
-            return _context.Roles.FirstOrDefault(r => r.RoleName == roleName);
+            return _context.Roles.FirstOrDefault(r => r.roleName == roleName); // Đổi từ RoleName
         }
     }
 }

@@ -8,16 +8,26 @@ namespace iPortal.Data.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int id { get; set; }
 
         [ForeignKey("User")]
-        public int UserId { get; set; }
-        public User User { get; set; }
+        [Column("user_id")]
+        public int userId { get; set; }
+        public User user { get; set; }
 
-        public string CompanyName { get; set; }
-        public string Address { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Website { get; set; }
+        [Column("company_name")]
+        public string companyName { get; set; }
+
+        [Column("address")]
+        public string address { get; set; }
+
+        [Column("email")]
+        public string email { get; set; }
+
+        [Column("phone_number")]
+        public string phoneNumber { get; set; }
+
+        [Column("website")]
+        public string website { get; set; }
     }
 }

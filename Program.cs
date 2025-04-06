@@ -3,8 +3,9 @@ using iPortal.Data;
 using iPortal.Data.Repositories;
 using iPortal.Mappings;
 using iPortal.Security;
+using iPortal.Exceptions;
 using iPortal.Services.Implementations;
-using iPortal.Services.Interfaces; // Thêm namespace này
+using iPortal.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -30,12 +31,13 @@ builder.Services.AddAutoMapper(config =>
 }, typeof(MappingProfile));
 
 // Dependency Injection
-builder.Services.AddScoped<CustomUserDetailsService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUserDetailsService, CustomUserDetailsService>();
 builder.Services.AddScoped<JwtUtil>(sp => new JwtUtil(builder.Configuration));
 builder.Services.AddScoped<JwtEntryPoint>();
-builder.Services.AddScoped<ISecurityService, SecurityServiceImpl>(); // Đã sửa
-builder.Services.AddScoped<StudentServiceImpl>();
-builder.Services.AddScoped<EmployerServiceImpl>();
+builder.Services.AddScoped<ISecurityService, SecurityServiceImpl>();
+builder.Services.AddScoped<IStudentService, StudentServiceImpl>();
+builder.Services.AddScoped<IEmployerService, EmployerServiceImpl>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<StudentRepository>();
 builder.Services.AddScoped<EmployerRepository>();
@@ -79,11 +81,12 @@ var port = builder.Configuration.GetValue<int>("Server:Port");
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 // Configure the HTTP request pipeline
 app.UseCors("AllowSpecificOrigins");
 app.UseAuthentication();
-app.UseMiddleware<JwtFilter>(); // Middleware đã được thêm
+app.UseMiddleware<JwtFilter>();
 app.UseAuthorization();
 
 app.MapControllers();

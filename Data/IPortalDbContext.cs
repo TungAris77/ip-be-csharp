@@ -1,4 +1,4 @@
-using iPortal.Data.Entities;
+﻿using iPortal.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace iPortal.Data
@@ -16,19 +16,19 @@ namespace iPortal.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-                .HasOne(u => u.Role)
+                .HasOne(u => u.role)
                 .WithMany()
-                .HasForeignKey(u => u.RoleId);
+                .HasForeignKey(u => u.roleId);
 
             modelBuilder.Entity<Student>()
-                .HasOne(s => s.User)
+                .HasOne(s => s.user)
                 .WithOne()
-                .HasForeignKey<Student>(s => s.UserId);
+                .HasForeignKey<Student>(s => s.userId);
 
             modelBuilder.Entity<Employer>()
-                .HasOne(e => e.User)
+                .HasOne(e => e.user)
                 .WithOne()
-                .HasForeignKey<Employer>(e => e.UserId);
+                .HasForeignKey<Employer>(e => e.userId);
         }
     }
 }

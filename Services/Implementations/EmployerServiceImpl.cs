@@ -25,15 +25,15 @@ namespace iPortal.Services.Implementations
         public void CreateEUser(CreateEUserRequest request)
         {
             var user = _mapper.Map<User>(request);
-            user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password); // Sửa ở đây
+            user.password = BCrypt.Net.BCrypt.HashPassword(request.Password); // Đổi từ Password
             var role = _roleRepository.FindByRoleName("EMPLOYER")
                 ?? throw new ArgumentException("Role undefined");
-            user.Role = role;
-            user.Status = "INACTIVE";
+            user.role = role; // Đổi từ Role
+            user.status = "INACTIVE"; // Đổi từ Status
             var savedUser = _userRepository.Save(user);
 
             var employer = _mapper.Map<Employer>(request);
-            employer.User = savedUser;
+            employer.user = savedUser; // Đổi từ User
             _employerRepository.Save(employer);
         }
     }
