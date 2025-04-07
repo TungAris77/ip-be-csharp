@@ -11,10 +11,11 @@ namespace iPortal.Mappings
             // Ánh xạ từ CreateSUserRequest sang User
             CreateMap<CreateSUserRequest, User>()
                 .ForMember(dest => dest.username, opt => opt.MapFrom(src => src.Username))
-                .ForMember(dest => dest.password, opt => opt.Ignore()) // Password được mã hóa riêng
+                .ForMember(dest => dest.password, opt => opt.Ignore()) // Password được mã hóa riêng trong service
                 .ForMember(dest => dest.status, opt => opt.Ignore())   // Status được gán trong service
                 .ForMember(dest => dest.roleId, opt => opt.Ignore())   // RoleId được gán trong service
-                .ForMember(dest => dest.role, opt => opt.Ignore());    // Role được gán trong service
+                .ForMember(dest => dest.role, opt => opt.Ignore())     // Role được gán trong service
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null)); // Bỏ qua nếu null
 
             // Ánh xạ từ CreateSUserRequest sang Student
             CreateMap<CreateSUserRequest, Student>()
@@ -27,15 +28,17 @@ namespace iPortal.Mappings
                 .ForMember(dest => dest.email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.phoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.userId, opt => opt.Ignore())   // UserId được gán sau khi save User
-                .ForMember(dest => dest.user, opt => opt.Ignore());    // User được gán trong service
+                .ForMember(dest => dest.user, opt => opt.Ignore())     // User được gán trong service
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null)); // Bỏ qua nếu null
 
             // Ánh xạ từ CreateEUserRequest sang User
             CreateMap<CreateEUserRequest, User>()
                 .ForMember(dest => dest.username, opt => opt.MapFrom(src => src.Username))
-                .ForMember(dest => dest.password, opt => opt.Ignore()) // Password được mã hóa riêng
+                .ForMember(dest => dest.password, opt => opt.Ignore()) // Password được mã hóa riêng trong service
                 .ForMember(dest => dest.status, opt => opt.Ignore())   // Status được gán trong service
                 .ForMember(dest => dest.roleId, opt => opt.Ignore())   // RoleId được gán trong service
-                .ForMember(dest => dest.role, opt => opt.Ignore());    // Role được gán trong service
+                .ForMember(dest => dest.role, opt => opt.Ignore())     // Role được gán trong service
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null)); // Bỏ qua nếu null
 
             // Ánh xạ từ CreateEUserRequest sang Employer
             CreateMap<CreateEUserRequest, Employer>()
@@ -45,7 +48,8 @@ namespace iPortal.Mappings
                 .ForMember(dest => dest.phoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.website, opt => opt.MapFrom(src => src.Website))
                 .ForMember(dest => dest.userId, opt => opt.Ignore())   // UserId được gán sau khi save User
-                .ForMember(dest => dest.user, opt => opt.Ignore());    // User được gán trong service
+                .ForMember(dest => dest.user, opt => opt.Ignore())     // User được gán trong service
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null)); // Bỏ qua nếu null
         }
     }
 }

@@ -21,7 +21,7 @@ namespace iPortal.DTOs.User
         public string CompanyName { get; set; }
 
         [Required(ErrorMessage = "Hãy nhập địa chỉ")]
-        [StringLength(200, MinimumLength = 10, ErrorMessage = "Địa chỉ không hợp lệ")]
+        [StringLength(200, MinimumLength = 10, ErrorMessage = "Địa chỉ chưa cụ thể")]
         public string Address { get; set; }
 
         [Required(ErrorMessage = "Hãy nhập email")]
