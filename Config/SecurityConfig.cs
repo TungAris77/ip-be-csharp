@@ -30,7 +30,7 @@ namespace iPortal.Config
             {
                 options.AddPolicy("AllowSpecificOrigins", builder =>
                 {
-                    builder.WithOrigins("http://localhost:3000", "https://ip-fe-tungaris77s-projects.vercel.app")
+                    builder.WithOrigins("http://localhost:3000", "https://ip-fe.vercel.app")
                            .AllowAnyMethod()
                            .AllowAnyHeader()
                            .AllowCredentials();
